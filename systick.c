@@ -4,7 +4,7 @@
 void systick_counter_init(void){
 	/*Disable systick before config*/
 	SysTick->CTRL = 0;
-	/*Load systick rekoad value register with the maximum value*/
+	/*Load systick rekoad value register with the maximum value (24 Bit Timer starts with highest value)*/
 	SysTick->LOAD = 0x00FFFFFF;
 	/*Clear systick current value register*/
 	SysTick->VAL = 0;
