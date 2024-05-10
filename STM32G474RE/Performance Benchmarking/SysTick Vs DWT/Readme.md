@@ -1,7 +1,7 @@
 # SysTick Vs DWT
 
 ### Results:
-![image](https://github.com/AzazHassankhan/STM32Xxxx_Accelerator_Evaluation/assets/92155897/3c5b3a3f-c3f9-404c-9709-5b6584be5e43)
+![image](https://github.com/AzazHassankhan/STM32Xxxx_Accelerator_Evaluation/assets/92155897/5a601ba2-1a74-417c-b77f-b72ab2b3bf59)
 
 ### Conclutions:
 1. Systick introduces significant overhead as the calculation time increases.
