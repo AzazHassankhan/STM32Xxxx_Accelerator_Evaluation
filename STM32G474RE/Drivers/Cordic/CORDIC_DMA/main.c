@@ -31,7 +31,6 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define VRef 5
 #define ARRAY_SIZE 360
 /* USER CODE END PD */
 
@@ -69,26 +68,14 @@ static void MX_TIM16_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-float adc_int_to_float(uint16_t dac_resolution, uint16_t adc_val){
-	int result = 0;
-	return result = (float)(adc_val)*VRef/dac_resolution;
-}
 //Cordic Input/Output Buffers
 // Input and Output Buffer for Cordic function
 int32_t input[ARRAY_SIZE] = { };
 int32_t output[ARRAY_SIZE] = { };
 int32_t *pInputSin = input;
 int32_t *pCalculatedSin = output;
-int16_t outi = 0;
+int16_t out = 0;
 int16_t idx = 0;
-/*
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
-	  //Shift to reach the first 12-Bit of uint32_t variable
-	  dac_out = output[idx] >> 20;
-	  HAL_DAC_SetValue(&hdac1,DAC_CHANNEL_1,DAC_ALIGN_12B_R,dac_out);
-	  idx = (idx+1)%360;
-}
-*/
 /* USER CODE END 0 */
 
 /**
@@ -125,18 +112,16 @@ int main(void)
   MX_DAC1_Init();
   MX_TIM16_Init();
   /* USER CODE BEGIN 2 */
-  	  HAL_DAC_Start(&hdac1, DAC1_CHANNEL_1);
-  	//HAL_TIM_Base_Start_IT(&htim16);
-
-  	  // Buffer for angles side calculation in rad
-  	  float input_f[360] = { };
-  	  uint16_t i = 0;
-  	  // Convert degrees to radians
-  	  for (int degrees = 0; degrees < 360; degrees += 1) {
+  HAL_DAC_Start(&hdac1, DAC1_CHANNEL_1);
+  // Buffer for angles side calculation in rad
+  float input_f[360] = { };
+  uint16_t i = 0;
+  // Convert degrees to radians
+  for (int degrees = 0; degrees < 360; degrees += 1) {
   	      input_f[i] = ((float)((float)(degrees * 3.141592653) / 180.0) - 3.141592653)/3.141592653;
   	      input[i] = (int32_t)(input_f[i]*2147483647);
   	      i++;
-      }
+  }
   	  //CordicConfiguration-------------------------------------------------------------------------------------------------
   	  //Zero Overhead mode
   	  CORDIC->CSR &= 0xFFFFFFF0; //Function Cosine 0
@@ -147,11 +132,7 @@ int main(void)
 	  CORDIC->CSR &= 0xFFEFFFFF;			//NBR of input arguments (NARGS) and/or results(NRES)1 32
 	  CORDIC->CSR &= 0xFFDFFFFF;			//size of input and output (ARGSIZE,RESSIZE)32
 	  CORDIC->CSR &= 0xFFBFFFFF;			//size of input and output (ARGSIZE,RESSIZE)32
-  	  //Start the CORDIC Calculations---------------------------------------------------------------------------------------------
-	  //Angaben: hcordic, input, output, Direction
-	 //HAL_CORDIC_Calculate_DMA(&hcordic, pInputSin, pCalculatedSin,1, CORDIC_DMA_DIR_IN_OUT);
-	  HAL_Delay(1);
-
+  	  //Start the CORDIC Calculations-------------------------------------------------------------------------
 	  //DMATRANSFER DATALEWNGTH
 	  hcordic.DMADirection = CORDIC_DMA_DIR_IN_OUT;
 	  hcordic.hdmaOut->DMAmuxChannelStatus->CFR = 0xFF;
@@ -166,33 +147,6 @@ int main(void)
 	  hcordic.hdmaIn->Instance->CPAR = CORDIC->WDATA;
 	  hcordic.hdmaIn->Instance->CMAR = pInputSin;
 	  HAL_Delay(1);
-
-  	/* Write first angle to cordic */
-  	//WRITE_REG(hcordic.Instance->WDATA, (uint16_t)input[0])
-  	  //CORDIC->WDATA = input[0];
-  	/* Write remaining angles and read sine results */
-	  /*
-  	for(uint32_t i = 0; i < ARRAY_SIZE; i++)
-  	{
-  	CORDIC->WDATA = input[i];
-
-  	while(CORDIC->CSR >> 31 == 0){
-
-  	}
-
-  	*pCalculatedSin = CORDIC->RDATA;
-  	pCalculatedSin++;
-  	}
-  	*pCalculatedSin = CORDIC->RDATA;
-
-  	float input_floti = 0;
-  	float output_floti = 0;
-  	input_floti = (float)((float)input[1]/2147483647);
-  	output_floti = (float)((float)output[1]/2147483647);
-  	uint16_t halol = 5;
-*/
-
-  	//HAL_CORDIC_Calculate(&hcordic, input, output, 360, 100);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -203,10 +157,10 @@ int main(void)
   	}
   while (1)
   {
-	  outi= output2[idx] >> 20;
-	  HAL_DAC_SetValue(&hdac1,DAC_CHANNEL_1,DAC_ALIGN_12B_R,outi);
+	  out= output2[idx] >> 20;
+	  HAL_DAC_SetValue(&hdac1,DAC_CHANNEL_1,DAC_ALIGN_12B_R,out);
 	  idx = (idx+1)%360;
-	  HAL_Delay(10);
+	  HAL_Delay(1);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
