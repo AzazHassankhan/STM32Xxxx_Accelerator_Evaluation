@@ -67,7 +67,7 @@ while (CYCLES <= 15)
         barh(CYCLES, log(MAE));
         text(log(MAE), CYCLES, num2str(MAE), 'VerticalAlignment', 'middle', 'HorizontalAlignment', 'left'); % Display MAE value as text
         title('CORDIC UNIT Precision'); % Title for the plot
-        xlabel('Root Mean Square Error');
+        xlabel('Mean Absolute Error');
         ylabel('Cycles');
         figure(f3); % Select the third figure
 
