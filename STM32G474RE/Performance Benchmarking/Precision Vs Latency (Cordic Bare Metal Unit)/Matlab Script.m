@@ -72,11 +72,11 @@ while (CYCLES <= 15)
         figure(f3); % Select the third figure
 
         fprintf(" Transfer %i DONE \n", CYCLES); % Display transfer completion message
-        fwrite(STM32, 1, 'uint8'); % Send a signal indicating readiness for the next transfer
-
         % Increment the cycle count and update last received CORDIC data
         CYCLES = CYCLES + 1;
         Last_Cordic_Rx_Data = rx_data_Cordic;
+        fwrite(STM32, 1, 'uint8'); % Send a signal indicating readiness for the next transfer
+
     end
 end
 
