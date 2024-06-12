@@ -18,15 +18,11 @@ hold on;     % Hold on to the current plot
 f2 = figure; % Figure for latency
 hold on;     % Hold on to the current plot
 
-f3 = figure; % Figure for precision (MAE)
-hold on;     % Hold on to the current plot
 
 % Initialize variables
 CYCLES = 1;             % Start with the first cycle
 Last_Cordic_Rx_Data = zeros(1, 4096); % Initialize last received CORDIC data
 legendentries={};
-% Notify the STM32 that MATLAB is ready to receive data
-fwrite(STM32, 1, 'uint8'); % Send a signal indicating readiness
 
 % Loop until data for all cycles is received
 while (CYCLES <= 15)
@@ -37,15 +33,7 @@ while (CYCLES <= 15)
         rx_data_Latency = fread(STM32, 1, 'int32');  % Read latency data
         Difference = rx_data_Cordic - Last_Cordic_Rx_Data;
         
-        % Calculate mean absolute error (MAE) and root mean square error (RMSE)
-        if (CYCLES > 1)
-            MAE = mean(abs(Difference));
-            RMSE = sqrt(mean(Difference .^ 2));
-        else
-            MAE = 0;
-            RMSE = 0;
-        end
-        
+
         % Plot the CORDIC data
         plot(rx_data_Cordic);
         title('CORDIC UNIT VALUES'); % Title for the plot
@@ -62,14 +50,7 @@ while (CYCLES <= 15)
         xlabel('Latency');
         ylabel('Cycles');
         figure(f2); % Select the second figure
-
-        % Plot the mean absolute error
-        barh(CYCLES, log(MAE));
-        text(log(MAE), CYCLES, num2str(MAE), 'VerticalAlignment', 'middle', 'HorizontalAlignment', 'left'); % Display MAE value as text
-        title('CORDIC UNIT Precision'); % Title for the plot
-        xlabel('Mean Absolute Error');
-        ylabel('Cycles');
-        figure(f3); % Select the third figure
+        
 
         fprintf(" Transfer %i DONE \n", CYCLES); % Display transfer completion message
         % Increment the cycle count and update last received CORDIC data
